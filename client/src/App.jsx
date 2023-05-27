@@ -1,74 +1,38 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-import HttpClient from "./services/HttpClient";
-import Navbar from "./components/Navbar";
+import React, { useEffect, useState } from "react";
 import AppContext from "./AppContext";
-import { Switch, Route, Redirect } from "react-router-dom";
-import Journal from "./pages/Journal";
-import InstallationWizard from "./components/InstallationWizard";
+import { Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
+import Navbar from "./components/Navbar";
+import Auth from "./pages/Auth";
+import api from "./api";
+import Records from "./pages/Records";
 
 function App() {
   const [user, setUser] = useState(null);
-  const [meals, setMeals] = useState([]);
   const [initiated, setInitiated] = useState(false);
-  const [installed, setInstalled] = useState(false);
-  const [isDenmark, setIsDenmark] = useState(false);
 
   useEffect(() => {
     init();
   }, []);
 
   const init = async () => {
-    const { data } = await HttpClient().get("/api/auth/init");
-
-    setInstalled(data.installed);
-    setIsDenmark(data.isDenmark);
-
-    if (data.user) {
-      setUser(data.user);
-      setMeals(data.meals);
-    }
+    const { data } = await api.get("/api/auth/init");
+    setUser(data.user);
     setInitiated(true);
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
   };
 
   return (
     initiated && (
-      <AppContext.Provider
-        value={{
-          user,
-          setUser,
-          logout,
-          setMeals,
-          meals,
-          installed,
-        }}
-      >
-        {isDenmark ? (
-          <>
-            {installed && <Navbar />}
-            {installed && (
-              <Switch>
-                <Route path="/journal">
-                  {user ? <Journal /> : <Redirect to="/" />}
-                </Route>
-                <Route path="/" exact>
-                  <Dashboard />
-                </Route>
-              </Switch>
-            )}
-            {!installed && <InstallationWizard />}
-          </>
-        ) : (
-          <div>
-            <h1>You must be located in Denmark in order to use this app.</h1>
-          </div>
-        )}
+      <AppContext.Provider value={{ user, setUser }}>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/register" element={<Auth mode="register" />} />
+          <Route path="/login" element={<Auth mode="login" />} />
+
+          <Route path="/records" element={<Records />} />
+          <Route path="*">"404 Not Found"</Route>
+        </Routes>
       </AppContext.Provider>
     )
   );

@@ -1,2 +1,3 @@
 # bodychamp
-Fitness Journal
+
+Fitness Tracker
