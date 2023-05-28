@@ -9,10 +9,12 @@ export interface ISet {
 export interface IWorkout extends Document {
   date: Date;
   exercises: IExercise[];
+  userId: string;
 }
 
 const WorkoutSchema = new mongoose.Schema<IWorkout>(
   {
+    userId: mongoose.Schema.Types.ObjectId,
     date: Date,
     exercises: [
       {

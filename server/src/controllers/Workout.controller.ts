@@ -31,6 +31,7 @@ export default class WorkoutController extends BaseController {
     if (!req.body._id) {
       workout = new Workout({
         ...req.body,
+        userId: res.locals.userId,
       });
       await workout.save();
     } else {
@@ -114,7 +115,10 @@ export default class WorkoutController extends BaseController {
   @Middleware([IsUser])
   @Get("/date/:date")
   public async getWorkoutByDate(req: Request, res: Response) {
-    const workout = await Workout.findOne({ date: req.params.date });
+    const workout = await Workout.findOne({
+      date: req.params.date,
+      userId: res.locals.userId,
+    });
 
     return res.send({ workout });
   }
