@@ -59,7 +59,7 @@ export default class WorkoutController extends BaseController {
         if (set.weight) {
           if (
             set.reps > highestReps ||
-            (set.reps === highestReps && set.weight > highestWeightSet?.weight!)
+            set.weight > highestWeightSet?.weight!
           ) {
             highestReps = set.reps;
             highestWeightSet = set;
@@ -87,10 +87,15 @@ export default class WorkoutController extends BaseController {
             topSet?.weight || 0,
             topSet?.reps || 0
           );
-          if (oneRepMax > record.oneRepMax) {
-            record.weight = topSet?.weight || 0;
-            record.reps = topSet?.reps || 0;
-            record.oneRepMax = oneRepMax;
+          if (record.weight && topSet?.weight) {
+            if (
+              record.weight < topSet?.weight ||
+              (record.weight === topSet?.weight && record.reps < topSet?.reps)
+            ) {
+              record.weight = topSet?.weight || 0;
+              record.reps = topSet?.reps || 0;
+              record.oneRepMax = oneRepMax;
+            }
           }
         }
       }
