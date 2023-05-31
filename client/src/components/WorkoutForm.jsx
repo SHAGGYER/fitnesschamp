@@ -110,6 +110,7 @@ export default function WorkoutForm({ currentDate, existingWorkout }) {
                 <div className="flex flex-col gap-2">
                   {exercise.sets.map((set, setIndex) => (
                     <div key={setIndex} className="flex gap-2 items-center">
+                      <span>Weight</span>
                       <input
                         type="number"
                         placeholder="Weight"
@@ -124,6 +125,7 @@ export default function WorkoutForm({ currentDate, existingWorkout }) {
                           });
                         }}
                       />
+                      <span>Reps</span>
                       <input
                         type="number"
                         placeholder="Reps"
