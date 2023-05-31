@@ -94,7 +94,7 @@ export default function WorkoutForm({ currentDate, existingWorkout }) {
                     {exercise.title}
                   </h2>
                   <i
-                    className="fa-solid fa-trash cursor-pointer"
+                    className="fa-solid fa-trash cursor-pointer text-2xl"
                     onClick={() => {
                       setExercises((prev) => {
                         const newExercises = [...prev];
@@ -140,7 +140,7 @@ export default function WorkoutForm({ currentDate, existingWorkout }) {
                       />
                       {setIndex > 0 && (
                         <i
-                          className="fa-solid fa-trash cursor-pointer"
+                          className="fa-solid fa-trash cursor-pointer text-2xl"
                           onClick={() => {
                             setExercises((prev) => {
                               const newExercises = [...prev];
@@ -151,7 +151,7 @@ export default function WorkoutForm({ currentDate, existingWorkout }) {
                         ></i>
                       )}
                       <i
-                        className="fa-solid fa-plus cursor-pointer"
+                        className="fa-solid fa-plus cursor-pointer text-2xl"
                         onClick={() => {
                           setExercises((prev) => {
                             const newExercises = [...prev];
