@@ -20,6 +20,10 @@ export default function WorkoutForm({ currentDate, existingWorkout }) {
     if (existingWorkout) {
       setWorkout(existingWorkout);
       setExercises(existingWorkout.exercises);
+      setWalkingSessions(existingWorkout.walkingSessions);
+      if (existingWorkout.walkingSessions.length > 0) {
+        setWalkingOpen(true);
+      }
     } else {
       setWorkout({
         date: currentDate,
@@ -29,6 +33,10 @@ export default function WorkoutForm({ currentDate, existingWorkout }) {
   }, [existingWorkout]);
 
   const [exercises, setExercises] = useState(existingWorkout?.exercises || []);
+  const [walkingSessions, setWalkingSessions] = useState(
+    existingWorkout?.walkingSessions || []
+  );
+  const [walkingOpen, setWalkingOpen] = useState(false);
 
   const addExercise = () => {
     setExercises((prev) => [
@@ -46,10 +54,21 @@ export default function WorkoutForm({ currentDate, existingWorkout }) {
     ]);
   };
 
+  const addWalkingSession = () => {
+    setWalkingSessions((prev) => [
+      ...prev,
+      {
+        minutes: "",
+      },
+    ]);
+    setWalkingOpen(true);
+  };
+
   const saveWorkout = async () => {
     const newWorkout = {
       ...workout,
       exercises,
+      walkingSessions,
     };
 
     const { data } = await api.post("/api/workouts", newWorkout);
@@ -57,8 +76,78 @@ export default function WorkoutForm({ currentDate, existingWorkout }) {
     setWorkout(data.workout);
   };
 
+  const calculateTotalWalkingMinutes = () => {
+    return walkingSessions.reduce((acc, session) => {
+      return acc + parseInt(session.minutes);
+    }, 0);
+  };
+
   return (
     <div>
+      {walkingSessions.length > 0 && (
+        <div className="flex flex-col gap-4 mb-4 border border-gray-300 p-2">
+          <div className="flex items-center">
+            <h2
+              className="text-2xl flex-grow"
+              onClick={() => {
+                setWalkingOpen((prev) => !prev);
+              }}
+            >
+              Walking Session ({calculateTotalWalkingMinutes()} minutes)
+            </h2>
+            <i
+              className="fa-solid fa-trash cursor-pointer text-2xl"
+              onClick={() => {
+                setWalkingSessions((prev) => {
+                  const newWalkingSessions = [...prev];
+                  newWalkingSessions.splice(index, 1);
+                  return newWalkingSessions;
+                });
+              }}
+            ></i>
+          </div>
+          {walkingSessions.map((session, index) => (
+            <div
+              key={index}
+              className="flex flex-col gap-2 border border-gray-300 p-2"
+            >
+              {walkingOpen && (
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2 items-center">
+                    <span>Minutes</span>
+                    <input
+                      type="number"
+                      placeholder="Minutes"
+                      className="border border-gray-300 p-2 w-full"
+                      value={session.minutes}
+                      onChange={(e) => {
+                        setWalkingSessions((prev) => {
+                          const newWalkingSessions = [...prev];
+                          newWalkingSessions[index].minutes = e.target.value;
+                          return newWalkingSessions;
+                        });
+                      }}
+                    />
+                    <i
+                      className="fa-solid fa-trash cursor-pointer text-2xl"
+                      onClick={() => {
+                        setWalkingSessions((prev) => {
+                          const newWalkingSessions = [...prev];
+                          newWalkingSessions.splice(index, 1);
+                          return newWalkingSessions;
+                        });
+                      }}
+                    ></i>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+          <Button onClick={addWalkingSession} variant="success">
+            Add Walking Session
+          </Button>
+        </div>
+      )}
       {exercises.length > 0 && (
         <div className="flex flex-col gap-4 mb-4">
           {exercises.map((exercise, index) => (
@@ -198,6 +287,9 @@ export default function WorkoutForm({ currentDate, existingWorkout }) {
       <div className="flex gap-2">
         <Button variant="primary" onClick={addExercise}>
           Add Exercise
+        </Button>
+        <Button variant="primary" onClick={addWalkingSession}>
+          Add Walking Exercise
         </Button>
         <Button variant="success" onClick={saveWorkout}>
           Save Workout
