@@ -29,6 +29,8 @@ export default function WorkoutForm({ currentDate, existingWorkout }) {
         date: currentDate,
       });
       setExercises([]);
+      setWalkingSessions([]);
+      setWalkingOpen(false);
     }
   }, [existingWorkout]);
 

@@ -43,6 +43,7 @@ export default class WorkoutController extends BaseController {
       }
 
       workout.exercises = req.body.exercises;
+      workout.walkingSessions = req.body.walkingSessions;
       await workout.save();
     }
 
